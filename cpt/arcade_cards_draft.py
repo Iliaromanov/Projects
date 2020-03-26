@@ -6,8 +6,10 @@ HEIGHT = 600
 pick_up_card = False
 using_card = None
 
-card_width = 30
-card_height = 60
+card_width = 40
+card_height = 70
+
+names = ['ace', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king']
 
 class PlayingCard:
     """Creates and organizes the playing cards
@@ -30,7 +32,7 @@ class PlayingCard:
     
     @staticmethod
     def make_cards():
-        names = ['ace', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king']
+        global names
 
         i = 0
 
@@ -65,7 +67,7 @@ class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
 
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color(arcade.color.WHEAT)
 
         # If you have sprite lists, you should create them here,
         # and set them to None
@@ -79,6 +81,7 @@ class MyGame(arcade.Window):
 
         # Draw everything below here.
         global card_height, card_height
+        global names
 
         for card in PlayingCard.hearts.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.RED)
@@ -92,7 +95,11 @@ class MyGame(arcade.Window):
         for card in PlayingCard.clubs.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.BLACK)
 
-        
+        i = 0
+
+        while i < 13:
+            arcade.draw_text(list(PlayingCard.hearts.keys())[i], list(PlayingCard.hearts.values())[i].x, list(PlayingCard.hearts.values())[i].y, color=arcade.color.WHITE)
+            i += 1
 
     def update(self, delta_time):
         """
@@ -153,7 +160,6 @@ class MyGame(arcade.Window):
 
 def main():
     PlayingCard.make_cards()
-
     game = MyGame(WIDTH, HEIGHT, "My Game")
     game.setup()
     arcade.run()
