@@ -3,17 +3,26 @@ import arcade
 WIDTH = 800
 HEIGHT = 600
 
-# A class for creating and organizing playing cards
+pick_up_card = False
+using_card = None
+
+card_width = 30
+card_height = 60
+
 class PlayingCard:
+    """Creates and organizes the playing cards
+    """
     full_deck = []
     hearts = {}
     diamonds = {}
     spades = {}
     clubs = {}
 
-    def __init__(self, card_value: int, suite: str):
+    def __init__(self, card_value: int, suite: str, x: int, y: int):
         self.card_value = card_value
         self.suite = suite
+        self.x = x
+        self.y = y
         PlayingCard.full_deck.append(self)
 
     def __str__(self) -> str:
@@ -26,32 +35,30 @@ class PlayingCard:
         i = 0
 
         while i < 13:
-            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts')
+            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts', (i+1) * 50, 500)
             
             i += 1
 
         j = 0
 
         while j < 13:
-            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds')
+            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds', (j+1) * 50, 425)
             
             j += 1
 
         k = 0
 
         while k < 13:
-            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades')
+            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades', (k+1) * 50, 350)
             
             k += 1
 
         l = 0
 
         while l < 13:
-            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs')
+            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs', (l+1) * 50, 275)
             
             l += 1
-
-PlayingCard.make_cards()
 
 
 class MyGame(arcade.Window):
@@ -71,17 +78,21 @@ class MyGame(arcade.Window):
         arcade.start_render()  # keep as first line
 
         # Draw everything below here.
+        global card_height, card_height
+
         for card in PlayingCard.hearts.values():
-            arcade.draw_xywh_rectangle_filled(card.card_value * 50, 500, 25, 50, arcade.color.RED)
+            arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.RED)
 
         for card in PlayingCard.diamonds.values():
-            arcade.draw_xywh_rectangle_filled(card.card_value * 50, 425, 25, 50, arcade.color.RED)
+            arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.RED)
 
         for card in PlayingCard.spades.values():
-            arcade.draw_xywh_rectangle_filled(card.card_value * 50, 350, 25, 50, arcade.color.BLACK)
+            arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.BLACK)
 
         for card in PlayingCard.clubs.values():
-            arcade.draw_xywh_rectangle_filled(card.card_value * 50, 275, 25, 50, arcade.color.BLACK)
+            arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.BLACK)
+
+        
 
     def update(self, delta_time):
         """
@@ -109,26 +120,44 @@ class MyGame(arcade.Window):
         """
         Called whenever the mouse moves.
         """
-        pass
+        global pick_up_card, using_card
+        
+        if pick_up_card:
+            using_card.x = x
+            using_card.y = y
+             
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
         Called when the user presses a mouse button.
         """
-        pass
+        global pick_up_card, using_card
+        global card_height, card_height
+
+        for card in PlayingCard.full_deck:
+            if x in range(card.x-card_width//2, card.x+card_width//2) and y in range(card.y-card_height//2, card.y+card_height//2):
+                pick_up_card = True
+                using_card = card
+
+        print(pick_up_card)
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
         Called when a user releases a mouse button.
         """
-        pass
+        global pick_up_card, using_card
+
+        pick_up_card = False
+        using_card = None
 
 
 def main():
+    PlayingCard.make_cards()
+
     game = MyGame(WIDTH, HEIGHT, "My Game")
     game.setup()
     arcade.run()
-
+    
 
 if __name__ == "__main__":
     main()
