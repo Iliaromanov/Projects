@@ -1,5 +1,6 @@
 from typing import Dict
 
+
 class Person:
     all_ppl = {}
 
