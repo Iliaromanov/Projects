@@ -32,34 +32,28 @@ class PlayingCard:
     
     @staticmethod
     def make_cards():
+        """Creates playing cards
+        """
         global names
 
         i = 0
-
         while i < 13:
-            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts', (i+1) * 50, 500)
-            
+            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts', (i+1) * 50, 500)           
             i += 1
 
         j = 0
-
         while j < 13:
-            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds', (j+1) * 50, 425)
-            
+            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds', (j+1) * 50, 425)            
             j += 1
 
         k = 0
-
         while k < 13:
-            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades', (k+1) * 50, 350)
-            
+            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades', (k+1) * 50, 350)          
             k += 1
 
         l = 0
-
         while l < 13:
-            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs', (l+1) * 50, 275)
-            
+            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs', (l+1) * 50, 275)            
             l += 1
 
 
@@ -83,22 +77,44 @@ class MyGame(arcade.Window):
         global card_height, card_height
         global names
 
+        # draws hearts playing cards
         for card in PlayingCard.hearts.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.RED)
 
+        i = 0
+        while i < 13:
+            arcade.draw_text(names[i], list(PlayingCard.hearts.values())[i].x-card_width//4, list(PlayingCard.hearts.values())[i].y, color=arcade.color.WHITE)
+            arcade.draw_text("hearts", list(PlayingCard.hearts.values())[i].x-card_width//3, list(PlayingCard.hearts.values())[i].y-10, arcade.color.WHITE, font_size=8)
+            i += 1
+
+        # draws diamonds playing cards
         for card in PlayingCard.diamonds.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.RED)
 
+        i = 0
+        while i < 13:
+            arcade.draw_text(names[i], list(PlayingCard.diamonds.values())[i].x-card_width//4, list(PlayingCard.diamonds.values())[i].y, color=arcade.color.WHITE)
+            arcade.draw_text("diamonds", list(PlayingCard.diamonds.values())[i].x-card_width//2, list(PlayingCard.diamonds.values())[i].y-10, color=arcade.color.WHITE, font_size=8)
+            i += 1
+
+        # draws spades playing cards
         for card in PlayingCard.spades.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.BLACK)
 
+        i = 0
+        while i < 13:
+            arcade.draw_text(names[i], list(PlayingCard.spades.values())[i].x-card_width//4, list(PlayingCard.spades.values())[i].y, color=arcade.color.WHITE)
+            arcade.draw_text("spades", list(PlayingCard.spades.values())[i].x-card_width//3, list(PlayingCard.spades.values())[i].y-10, arcade.color.WHITE, font_size=8)
+            i += 1
+
+        # draws clubs playing cards
         for card in PlayingCard.clubs.values():
             arcade.draw_rectangle_filled(card.x, card.y, card_width, card_height, arcade.color.BLACK)
 
         i = 0
-
         while i < 13:
-            arcade.draw_text(list(PlayingCard.hearts.keys())[i], list(PlayingCard.hearts.values())[i].x, list(PlayingCard.hearts.values())[i].y, color=arcade.color.WHITE)
+            arcade.draw_text(names[i], list(PlayingCard.clubs.values())[i].x-card_width//4, list(PlayingCard.clubs.values())[i].y, color=arcade.color.WHITE)
+            arcade.draw_text("clubs", list(PlayingCard.clubs.values())[i].x-card_width//3, list(PlayingCard.clubs.values())[i].y-10, arcade.color.WHITE, font_size=8)
             i += 1
 
     def update(self, delta_time):
@@ -160,7 +176,7 @@ class MyGame(arcade.Window):
 
 def main():
     PlayingCard.make_cards()
-    game = MyGame(WIDTH, HEIGHT, "My Game")
+    game = MyGame(WIDTH, HEIGHT, "Solataire")
     game.setup()
     arcade.run()
     
