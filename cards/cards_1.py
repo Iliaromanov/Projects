@@ -1,4 +1,5 @@
 from typing import Dict, List
+
 import arcade
 
 clubs = {'suite': 'clubs',
