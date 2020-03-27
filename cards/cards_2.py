@@ -66,6 +66,7 @@ class PlayingCard:
                 card.color = 'black'
 '''
 
+
 PlayingCard.make_cards()
 
 print(len(PlayingCard.full_deck))
