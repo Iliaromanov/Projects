@@ -38,22 +38,22 @@ class PlayingCard:
 
         i = 0
         while i < 13:
-            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts', (i+1) * 50, 500)           
+            PlayingCard.hearts[names[i]] = PlayingCard(i+1, 'hearts', (i+1) * 57, 400)           
             i += 1
 
         j = 0
         while j < 13:
-            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds', (j+1) * 50, 425)            
+            PlayingCard.diamonds[names[j]] = PlayingCard(j+1, 'diamonds', (j+1) * 57, 325)            
             j += 1
 
         k = 0
         while k < 13:
-            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades', (k+1) * 50, 350)          
+            PlayingCard.spades[names[k]] = PlayingCard(k+1, 'spades', (k+1) * 57, 250)          
             k += 1
 
         l = 0
         while l < 13:
-            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs', (l+1) * 50, 275)            
+            PlayingCard.clubs[names[l]] = PlayingCard(l+1, 'clubs', (l+1) * 57, 175)            
             l += 1
 
 
@@ -116,6 +116,13 @@ class MyGame(arcade.Window):
             arcade.draw_text(names[i], list(PlayingCard.clubs.values())[i].x-card_width//4, list(PlayingCard.clubs.values())[i].y, color=arcade.color.WHITE)
             arcade.draw_text("clubs", list(PlayingCard.clubs.values())[i].x-card_width//3, list(PlayingCard.clubs.values())[i].y-10, arcade.color.WHITE, font_size=8)
             i += 1
+
+        # draws slots for cards
+        arcade.draw_xywh_rectangle_outline(37, 475, card_width, card_height, arcade.color.BLUE)
+
+        for num in range(4):
+            arcade.draw_xywh_rectangle_outline(550 + num*50, 475, card_width, card_height, arcade.color.BLUE) 
+
 
     def update(self, delta_time):
         """
