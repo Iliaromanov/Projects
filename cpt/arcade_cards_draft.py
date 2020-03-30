@@ -9,6 +9,9 @@ using_card = None
 card_width = 40
 card_height = 70
 
+deal_slot_x = 57
+deal_slot_y = 510
+
 names = ['ace', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king']
 
 class PlayingCard:
@@ -75,6 +78,7 @@ class MyGame(arcade.Window):
 
         # Draw everything below here.
         global card_height, card_height
+        global deal_slot_x, deal_slot_y
         global names
 
         # draws hearts playing cards
@@ -118,7 +122,7 @@ class MyGame(arcade.Window):
             i += 1
 
         # draws slots for cards
-        arcade.draw_xywh_rectangle_outline(37, 475, card_width, card_height, arcade.color.BLUE)
+        arcade.draw_rectangle_outline(deal_slot_x, deal_slot_y, card_width, card_height, arcade.color.BLUE)
 
         for num in range(4):
             arcade.draw_xywh_rectangle_outline(550 + num*50, 475, card_width, card_height, arcade.color.BLUE) 
@@ -162,12 +166,18 @@ class MyGame(arcade.Window):
         Called when the user presses a mouse button.
         """
         global pick_up_card, using_card
+        global deal_slot_x, deal_slot_y
         global card_height, card_height
 
         for card in PlayingCard.full_deck:
             if x in range(card.x-card_width//2, card.x+card_width//2) and y in range(card.y-card_height//2, card.y+card_height//2):
                 pick_up_card = True
                 using_card = card
+
+        if x in range(deal_slot_x-card_width//2, deal_slot_x+card_width//2) and y in range(deal_slot_y-card_height//2, deal_slot_y+card_height//2):
+            for card in PlayingCard.full_deck:
+                card.x = deal_slot_x
+                card.y = deal_slot_y
 
         print(pick_up_card)
 
@@ -190,3 +200,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
