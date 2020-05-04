@@ -1,54 +1,12 @@
-
+import os
 import datetime
 
 
 class BaseRecord:
     def __init__(self, id: int):
-        self.created_at = datetime.datetime.now()
+        self.created_at = datetime.datetime.now
         self.updated_at = datetime.datetime.now()
         self.id = id
-
-
-class Bin(BaseRecord):
-    all_bins = []
-
-    def __init__(self, location: str, part_id: str, qty_in_bin: int):
-        id = len(Bin.all_bins)
-        super().__init__(id)
-        self.location = location
-        self.part_id = part_id
-        self._qty_in_bin = qty_in_bin
-        Bin.all_bins.append(self)
-
-    def get_qty_in_bin(self):
-        return self._qty_in_bin
-
-    def set_qty_in_bin(self, new_value):
-        assert new_value is int
-        assert new_value >= 0
-        self._qty_in_bin = new_value
-        self.updated_at = datetime.datetime.now()
-
-
-class Part(BaseRecord):
-    all_parts = []
-
-    def __init__(self, name: str, quantity: int, bin_id: int):
-        id = len(Part.all_parts)
-        super().__init__(id)
-        self.name = name
-        self._quantity = quantity
-        self.bin_id = bin_id
-        Part.all_parts.append(self)
-
-    def get_quantity(self):
-        return self._quantity
-
-    def set_quantity(self, new_value):
-        assert new_value is int
-        assert new_value >= 0
-        self._quantity = new_value
-        self.updated_at = datetime.datetime.now()
 
 
 class User:
@@ -60,35 +18,78 @@ class User:
         User.all_users.append(self)
 
 
+class Part(BaseRecord):
+    all_parts = []
+
+    def __init__(self, name: str, quantity: int, barcode: str, bin_id: int):
+        id = len(Part.all_parts)
+        super().__init__(id)
+        self.name = name
+        self.quantity = quantity
+        self._barcode = barcode
+        self.bin_id = bin_id
+        Part.all_parts.append(self)
+
+    def get_barcode(self):
+        return self._barcode
+
+    def set_barcode(self, new_barcode: str):
+        assert new_barcode is str
+        self.barcode = new_barcode
+        self.updated_at = datetime.datetime.now()
+
+
+class Bin(BaseRecord):
+    all_bins = []
+
+    def __init__(self, location: str, part_id: int):
+        id = len(Bin.all_bins)
+        super().__init__(id)
+        self._location = location
+        self.part_id = part_id
+        self.qty_in_bin = 0
+        Bin.all_bins.append(self)
+
+    def get_location(self):
+        return self._location
+
+    def set_location(self, new_location: str):
+        assert new_location is str
+        assert len(new_location) <= 2
+        self._location = new_location
+        self.updated_at == datetime.datetime.now()
+        
+
 class Log(BaseRecord):
     all_logs = []
 
-    def __init__(self, user_id: int, part_id: int, quantity: int):
+    def __init__(self, user_id, part_id, quantity):
+        id = len(Log.all_logs)
+        super().__init__(id)
         self.user_id = user_id
         self.part_id = part_id
-        self._quantity = quantity
+        self.quantity = quantity
         Log.all_logs.append(self)
-
-    def get_quantity(self):
-        return self._quantity
-
-    def set_quantity(self, new_value):
-        assert new_value is int
-        assert new_value >= 0
-        self._quantity = new_value
-        self.updated_at = datetime.datetime.now()
 
 
 class InventoryManager:
     def __init__(self):
+        self.users = User.all_users
         self.parts = Part.all_parts
         self.bins = Bin.all_bins
         self.logs = Log.all_logs
-        self.users = User.all_users
+
+    def create_user(self, email: str, student_num: int) -> None:
+        User(email, student_num)
 
     def find_bin_by_location(self, location: str) -> Bin:
         for bin in self.bins:
             if bin.location == location:
+                return bin
+
+    def find_bin_by_id(self, bin_id: int) -> Bin:
+        for bin in self.bins:
+            if bin.id == bin_id:
                 return bin
 
     def find_user_by_student_num(self, num: int) -> User:
@@ -96,6 +97,41 @@ class InventoryManager:
             if user.student_num == num:
                 return user
 
-    def add_part(self, name, quantity, bin_location) -> None:
-        bin_id = self.find_bin_by_location(bin_location).id
+    def find_part_by_barcode(self, barcode: str) -> Part:
+        for part in self.parts:
+            if part.barcode == barcode:
+                return part
+
+    def add_part(name, quantity, bin_location) -> None:
+        bin = self.find_bin_by_location(bin_location)
+        bin_id = bin.id
         Part(name, quantity, bin_id)
+        bin.qty_in_bin += 1
+
+    def sign_out(self, part: Part, quantity: int, user: User) -> None:
+        bin_id = part.bin_id
+        associated_bin = find_bin_by_id(bin_id)
+
+        if associated_bin.qty_in_bin >= quantity:
+            associated_bin.qty_in_bin -= quantity
+
+        user_id = user.student_num
+        part_id = part.id
+
+        Log(user_id, part_id, quantity)
+
+    def return_part(self, part: Part, quantity: int, user: User) -> None:
+        bin_id = part.bin_id
+        associated_bin = find_bin_by_id(bin_id)        
+        associated_bin.qty_in_bin += quantity
+
+        user_id = user.student_num
+        part_id = part.id
+
+        Log(user_id, part_id, -1 * quantity)
+
+
+if __name__ == "__main__":
+    os.system("pytest")
+    os.system("mypy main.py --disallow-untyped-defs")
+    os.system("pycodestyle main.py --ignore=E501,W")
