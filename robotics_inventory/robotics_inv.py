@@ -9,10 +9,12 @@ class BaseRecord:
         self.id = id
 
 
-class User:
+class User(BaseRecord):
     all_users = []
 
     def __init__(self, email: str, student_num: int):
+        id = len(User.all_users)
+        super().__init__(id)
         self.email = email
         self.student_num = student_num
         User.all_users.append(self)
@@ -29,6 +31,10 @@ class Part(BaseRecord):
         self._barcode = barcode
         self.bin_id = bin_id
         Part.all_parts.append(self)
+
+        for bin in Bin.all_bins:
+            if bin.id == bin_id:
+                bin.qty_in_bin += quantity
 
     def get_barcode(self):
         return self._barcode
@@ -84,7 +90,7 @@ class InventoryManager:
 
     def find_bin_by_location(self, location: str) -> Bin:
         for bin in self.bins:
-            if bin.location == location:
+            if bin._location == location:
                 return bin
 
     def find_bin_by_id(self, bin_id: int) -> Bin:
@@ -99,18 +105,18 @@ class InventoryManager:
 
     def find_part_by_barcode(self, barcode: str) -> Part:
         for part in self.parts:
-            if part.barcode == barcode:
+            if part._barcode == barcode:
                 return part
 
-    def add_part(name, quantity, bin_location) -> None:
+    def add_part(self, name, quantity, barcode, bin_location) -> None:
         bin = self.find_bin_by_location(bin_location)
         bin_id = bin.id
-        Part(name, quantity, bin_id)
-        bin.qty_in_bin += 1
+        Part(name, quantity, barcode, bin_id)
+        bin.qty_in_bin += quantity
 
     def sign_out(self, part: Part, quantity: int, user: User) -> None:
         bin_id = part.bin_id
-        associated_bin = find_bin_by_id(bin_id)
+        associated_bin = self.find_bin_by_id(bin_id)
 
         if associated_bin.qty_in_bin >= quantity:
             associated_bin.qty_in_bin -= quantity
@@ -118,20 +124,22 @@ class InventoryManager:
         user_id = user.student_num
         part_id = part.id
 
-        Log(user_id, part_id, quantity)
+        Log(user_id, part_id, -1 * quantity)
 
     def return_part(self, part: Part, quantity: int, user: User) -> None:
         bin_id = part.bin_id
-        associated_bin = find_bin_by_id(bin_id)        
-        associated_bin.qty_in_bin += quantity
+        associated_bin = self.find_bin_by_id(bin_id)
+
+        if part.quantity >= quantity:
+            associated_bin.qty_in_bin += quantity
 
         user_id = user.student_num
         part_id = part.id
 
-        Log(user_id, part_id, -1 * quantity)
+        Log(user_id, part_id, quantity)
 
 
 if __name__ == "__main__":
     os.system("pytest")
-    os.system("mypy main.py --disallow-untyped-defs")
+#    os.system("mypy main.py --disallow-untyped-defs")
     os.system("pycodestyle main.py --ignore=E501,W")
